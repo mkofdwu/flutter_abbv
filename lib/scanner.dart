@@ -1,20 +1,5 @@
 import 'package:flutter_abbv/token.dart';
-
-const List<String> widgetNames = [
-  'container',
-  'row',
-  'column',
-  'text',
-  'textfield',
-  'button',
-  'image',
-  'scroll',
-  'listview',
-  'listtile',
-  'icon',
-  'iconbutton',
-  'spacer',
-];
+import 'package:flutter_abbv/widgets/widgets.dart';
 
 class ScanError extends Error {
   String message;
@@ -110,10 +95,11 @@ class _Scanner {
     // scan word token
     final start = current - 1;
     String word = previous();
-    while (isAlpha(peek()) || isDigit(peek())) {
+    while (isAlpha(peek()) || isDigit(peek()) || peek() == ',') {
+      // allow commas because needed in some properties (e.g. padding)
       word += advance();
     }
-    if (widgetNames.contains(word)) {
+    if (widgets.keys.contains(word)) {
       addToken(TokenType.widgetName, word, line, start);
     } else {
       addToken(TokenType.word, word, line, start);

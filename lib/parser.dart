@@ -1,5 +1,5 @@
 import 'package:flutter_abbv/token.dart';
-import 'package:flutter_abbv/widgets/widget.dart';
+import 'package:flutter_abbv/widgets/widgets.dart';
 
 class ParseError extends Error {
   String message;
@@ -32,15 +32,15 @@ class Parser {
     final name = consume(TokenType.widgetName, 'Widget name expected');
     final properties = widgetProps();
     final children = widgetChildren();
-    return Container(name.lexeme, properties, children);
+    return widgets[name.lexeme]!(properties, children);
   }
 
-  List<String> widgetProps() {
-    final properties = <String>[];
+  List<Token> widgetProps() {
+    final properties = <Token>[];
     while (check(TokenType.word) ||
         check(TokenType.color) ||
         check(TokenType.number)) {
-      properties.add(advance().lexeme);
+      properties.add(advance());
     }
     return properties;
   }
