@@ -12,4 +12,5 @@ void main(List<String> arguments) {
   }
   final tree = Parser(tokens).widget();
   print(printWidgetTree(tree, 0));
+  print(tree.toDartCode('').join('\n'));
 }

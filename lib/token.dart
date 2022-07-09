@@ -6,7 +6,6 @@ enum TokenType {
   widgetName,
   word,
   number,
-  color, // (e.g. #red, #f00)
 }
 
 class Token {

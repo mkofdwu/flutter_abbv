@@ -29,7 +29,8 @@ class Parser {
       final size = int.parse(advance().lexeme);
       return SizedBox(size);
     }
-    final name = consume(TokenType.widgetName, 'Widget name expected');
+    final name =
+        consume(TokenType.widgetName, 'Widget name expected, got ${peek()}');
     final properties = widgetProps();
     final children = widgetChildren();
     return widgets[name.lexeme]!(properties, children);
@@ -37,9 +38,7 @@ class Parser {
 
   List<Token> widgetProps() {
     final properties = <Token>[];
-    while (check(TokenType.word) ||
-        check(TokenType.color) ||
-        check(TokenType.number)) {
+    while (check(TokenType.word) || check(TokenType.number)) {
       properties.add(advance());
     }
     return properties;

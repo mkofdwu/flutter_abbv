@@ -16,47 +16,35 @@ class SimpleScanner {
   String word() {
     final start = current;
     if (!isAlpha(peek())) return '';
+    advance();
     while (isAlpha(peek()) || isDigit(peek())) {
       advance();
     }
     return source.substring(start, current);
   }
 
-  String hexChars() {
+  String sequence(bool Function(String) check) {
     final start = current;
-    while (isHexChar(peek())) {
+    while (check(peek())) {
       advance();
     }
     return source.substring(start, current);
   }
 
-  String color() {
-    // assumes # has already been consumed
-    String result = '';
-    if (isAlpha(peek())) {
-      result += word();
-    } else {
-      // expects hex value
-      result += hexChars();
-    }
-    if (peek() == '*') {
-      // alpha value
-      advance();
-      consumeSequence('0.1', '');
-    }
-  }
-
   static bool isDigit(String char) {
+    if (char.isEmpty) return false;
     return char.codeUnitAt(0) >= 48 && char.codeUnitAt(0) <= 57;
   }
 
   static bool isAlpha(String char) {
+    if (char.isEmpty) return false;
     return (char.codeUnitAt(0) >= 65 && char.codeUnitAt(0) <= 90) ||
         (char.codeUnitAt(0) >= 97 && char.codeUnitAt(0) <= 122) ||
         char == '_';
   }
 
   static bool isHexChar(String char) {
+    if (char.isEmpty) return false;
     return char.codeUnitAt(0) >= 48 && char.codeUnitAt(0) <= 57 || // 0-9
         char.codeUnitAt(0) >= 65 && char.codeUnitAt(0) <= 70 || // A-F
         char.codeUnitAt(0) >= 97 && char.codeUnitAt(0) <= 102; // a-f
@@ -84,10 +72,23 @@ class SimpleScanner {
     return source[current - 1];
   }
 
+  bool match(String expected) {
+    if (peek() != expected) return false;
+    advance();
+    return true;
+  }
+
   void consume(String expected, String failMessage) {
     if (advance() != expected) {
       // throw ScanError(failMessage);
       throw failMessage;
     }
+  }
+
+  void consumeString(String expected, String failMessage) {
+    if (source.substring(current, current + expected.length) != expected) {
+      throw failMessage;
+    }
+    current += expected.length;
   }
 }

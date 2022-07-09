@@ -43,7 +43,7 @@ class _Scanner {
         text();
         break;
       case '#':
-        color();
+        word();
         break;
       default:
         if (isDigit(char)) {
@@ -71,16 +71,6 @@ class _Scanner {
     addToken(TokenType.text, text, startLine, start);
   }
 
-  void color() {
-    // scan color token
-    final start = current - 1;
-    String color = '';
-    while (isAlpha(peek()) || isDigit(peek())) {
-      color += advance();
-    }
-    addToken(TokenType.color, color, line, start);
-  }
-
   void number() {
     // no floating point numbers for now
     final start = current - 1;
@@ -95,8 +85,9 @@ class _Scanner {
     // scan word token
     final start = current - 1;
     String word = previous();
-    while (isAlpha(peek()) || isDigit(peek()) || peek() == ',') {
-      // allow commas because needed in some properties (e.g. padding)
+    const allowedSymbols = ['_', '#', '*', '.', '&'];
+    while (
+        isAlpha(peek()) || isDigit(peek()) || allowedSymbols.contains(peek())) {
       word += advance();
     }
     if (widgets.keys.contains(word)) {

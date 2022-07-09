@@ -1,6 +1,7 @@
 // shitcode
 
-import 'package:flutter_abbv/properties/properties.dart';
+import 'package:flutter_abbv/properties/extractor.dart';
+import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/token.dart';
 
 import 'base_widget.dart';
@@ -11,77 +12,67 @@ class Container extends Widget {
   Container(List<Token> properties, List<Widget> children)
       : super(properties, children);
 
-  String toDartCode() {
-    int? width;
-    int? height;
-    String? color;
-    String? shape;
-    String? padding;
-    String? border;
-    String? radius;
-    String? shadow;
+  @override
+  List<String> toDartCode(String parentName) {
+    final extractor = PropertyExtractor(
+      enums: {'shape': shapeEnum},
+      namedProperties: [
+        NamedProperty('p', paddingToDartCode),
+        NamedProperty('b', borderToDartCode),
+        NamedProperty.i('r'),
+        NamedProperty('s', shadowToDartCode),
+      ],
+    );
+    extractor.extractProps(properties);
+    final p = extractor.extractedProps;
+    final nums = extractor.extractedNumbers;
 
-    for (final prop in properties) {
-      final str = prop.lexeme;
-      if (prop.type == TokenType.number) {
-        // width and height
-        if (width == null) {
-          width = int.parse(str);
-        } else {
-          height ??= int.parse(str);
-        }
-      } else if (prop.type == TokenType.color) {
-        color = str;
-      } else if (shapeEnum.contains(str)) {
-        shape = str;
-      } else {
-        switch (str[0]) {
-          case 'p':
-            padding = str.substring(1);
-            break;
-          case 'b':
-            border = str.substring(1);
-            break;
-          case 'r':
-            radius = str.substring(1);
-            break;
-          case 's':
-            shadow = str.substring(1);
-            break;
-          default:
-            throw 'Invalid property $str'; // TODO: improve error message
-        }
-      }
-    }
-
-    height ??= width; // if only one number is provided treat as a square
+    if (nums.length > 2) throw 'Container accepts at most 2 numbers';
 
     final code = ['Container('];
-    if (width != null) {
-      code.add('width: $width,');
+    if (nums.isNotEmpty) {
+      code.add('  width: ${nums[0]},');
+      code.add('  height: ${nums.length == 2 ? nums[1] : nums[0]},');
     }
-    if (height != null) {
-      code.add('height: $height,');
+    if (p['p'] != null) {
+      code.add('  padding: ${p['p']},');
     }
-    if (padding != null) {
-      code.add('padding: ${paddingToDartCode(padding)},');
+    // check to see if BoxDecoration is needed
+    if (p['shape'] != null ||
+        p['b'] != null ||
+        p['r'] != null ||
+        p['s'] != null) {
+      code.add('  decoration: BoxDecoration(');
+      if (extractor.extractedColors.isNotEmpty) {
+        code.add('    color: ${extractor.extractedColors[0]},');
+      }
+      if (p['shape'] != null) {
+        code.add('    shape: BoxShape.${p['shape']},');
+      }
+      if (p['b'] != null) {
+        code.add('    border: ${p['b']},');
+      }
+      if (p['r'] != null) {
+        code.add('    borderRadius: BorderRadius.circular(${p['r']}),');
+      }
+      if (p['s'] != null) {
+        code.add('    boxShadow: ${p['s']},');
+      }
+      code.add('  ),');
     }
-    // check to see if boxdecoration is needed
-    if (shape == null && border == null && radius == null && shadow == null) {
-      code.add('decoration: BoxDecoration(');
-      if (color != null) {
-        // TODO: switch out the enum if necessary
-        code.add('  color: Colors.$color,');
-      }
-      if (shape != null) {
-        code.add('  shape: BoxShape.$shape,');
-      }
-      if (border != null) {
-        code.add('  border: ${borderToDartCode(border)}');
-      }
-      if (radius != null) {
-        code.add('  borderRadius: BorderRadius.circular(${radius}),');
+
+    if (children.length > 1) {
+      throw 'Container can only have one child';
+    }
+    if (children.length == 1) {
+      final childDartCode = children[0].toDartCode('container');
+      code.add('  child: ${childDartCode[0]}');
+      for (final line in childDartCode.sublist(1)) {
+        code.add('  $line');
       }
     }
+    code.add('),');
+
+    return code;
   }
 }
