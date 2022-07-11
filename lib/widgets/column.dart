@@ -1,3 +1,4 @@
+import 'package:flutter_abbv/properties/constructors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/token.dart';
 
@@ -28,31 +29,31 @@ class Column extends Widget {
   @override
   List<String> toDartCode(String parentName) {
     final extractor = PropertyExtractor(
-      enums: {'msize': msizeEnum},
+      enums: [
+        EnumProperty('mainAxisSize', 'MainAxisSize', msizeEnum),
+      ],
       namedProperties: [
-        NamedProperty('c', (s) => caxisAbbv[s]!),
-        NamedProperty('m', (s) => maxisAbbv[s]!),
+        NamedProperty(
+          'c',
+          'crossAxisAlignment',
+          (s) => 'CrossAxisAlignment.${caxisAbbv[s]!}',
+        ),
+        NamedProperty(
+          'm',
+          'mainAxisAlignment',
+          (s) => 'MainAxisAlignment.${maxisAbbv[s]!}',
+        ),
       ],
     );
     extractor.extractProps(properties);
-    final p = extractor.extractedProps;
 
-    final code = ['Column('];
-    if (p['c'] != null) {
-      code.add('  crossAxisAlignment: CrossAxisAlignment.${p['c']},');
-    }
-    if (p['m'] != null) {
-      code.add('  mainAxisAlignment: MainAxisAlignment.${p['m']},');
-    }
-    if (p['msize'] != null) {
-      code.add('  mainAxisSize: MainAxisSize.${p['msize']},');
-    }
-    code.add('  children: [');
-    for (final child in children) {
-      code.addAll(child.toDartCode('column').map((line) => '    $line'));
-    }
-    code.add('  ],');
-    code.add('),');
+    final code = constructDartCode([
+      'Column',
+      'crossAxisAlignment',
+      'mainAxisAlignment',
+      'mainAxisSize',
+    ], extractor.extractedProps);
+    insertChildrenCode(code, children, 'column');
 
     return code;
   }

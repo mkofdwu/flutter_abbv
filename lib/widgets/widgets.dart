@@ -5,6 +5,8 @@ import 'container.dart';
 import 'row.dart';
 import 'column.dart';
 import 'scroll.dart';
+import 'center.dart';
+import 'icon.dart';
 
 export 'base_widget.dart';
 export 'text.dart';
@@ -12,7 +14,8 @@ export 'sizedbox.dart';
 export 'container.dart';
 export 'row.dart';
 export 'column.dart' hide caxisAbbv, maxisAbbv, msizeEnum;
-import 'scroll.dart';
+export 'center.dart';
+export 'icon.dart';
 
 final Map<String, Widget Function(List<Token>, List<Widget>)> widgets = {
   'container': (properties, children) => Container(properties, children),
@@ -20,6 +23,8 @@ final Map<String, Widget Function(List<Token>, List<Widget>)> widgets = {
   'column': (properties, children) => Column(properties, children),
   'scroll': (properties, children) =>
       SingleChildScrollView(properties, children),
+  'center': (properties, children) => Center(properties, children),
+  'icon': (properties, children) => Icon(properties, children),
   // 'textfield': (properties, children) => TextField(properties, children),
   // 'button': Button,
   // 'image': (properties, children) => Image(properties, children),

@@ -38,7 +38,7 @@ class Parser {
 
   List<Token> widgetProps() {
     final properties = <Token>[];
-    while (check(TokenType.word) || check(TokenType.number)) {
+    while (check(TokenType.property) || check(TokenType.number)) {
       properties.add(advance());
     }
     return properties;
@@ -50,15 +50,20 @@ class Parser {
       final children = <Widget>[];
       children.add(widget());
       while (!check(TokenType.rightParen) && !isAtEnd()) {
-        consume(TokenType.comma, 'Expect comma to separate list of widgets');
+        consume(TokenType.comma, 'Expect comma in widget list, got ${peek()}');
         children.add(widget());
       }
       consume(TokenType.rightParen, 'Missing closing parenthesis');
       return children;
     }
+    // single child
     if (check(TokenType.widgetName)) {
-      // single child
       return [widget()];
+    }
+    if (check(TokenType.text)) {
+      final text = advance();
+      final properties = widgetProps();
+      return [Text(text.lexeme, properties)];
     }
     return [];
   }

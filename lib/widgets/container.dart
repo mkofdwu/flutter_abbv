@@ -1,5 +1,6 @@
 // shitcode
 
+import 'package:flutter_abbv/properties/constructors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/token.dart';
@@ -15,63 +16,61 @@ class Container extends Widget {
   @override
   List<String> toDartCode(String parentName) {
     final extractor = PropertyExtractor(
-      enums: {'shape': shapeEnum},
+      enums: [
+        EnumProperty('shape', 'BoxShape', shapeEnum),
+      ],
       namedProperties: [
-        NamedProperty('p', paddingToDartCode),
-        NamedProperty('b', borderToDartCode),
-        NamedProperty.i('r'),
-        NamedProperty('s', shadowToDartCode),
+        NamedProperty('p', 'padding', paddingToDartCode),
+        NamedProperty('b', 'border', borderToDartCode),
+        NamedProperty('r', 'borderRadius', (s) => 'BorderRadius.circular($s)'),
+        NamedProperty('s', 'boxShadow', shadowToDartCode),
       ],
     );
     extractor.extractProps(properties);
-    final p = extractor.extractedProps;
+    final p = Map<String, String>.from(extractor.extractedProps);
     final nums = extractor.extractedNumbers;
-
+    final colors = extractor.extractedColors;
     if (nums.length > 2) throw 'Container accepts at most 2 numbers';
-
-    final code = ['Container('];
+    if (colors.length > 1) throw 'Container only accepts one color';
     if (nums.isNotEmpty) {
-      code.add('  width: ${nums[0]},');
-      code.add('  height: ${nums.length == 2 ? nums[1] : nums[0]},');
+      p['width'] = nums[0];
+      p['height'] = nums.length == 2 ? nums[1] : nums[0];
+      // use 0 to omit width or height
+      if (p['width'] == '0') p.remove('width');
+      if (p['height'] == '0') p.remove('height');
     }
-    if (p['p'] != null) {
-      code.add('  padding: ${p['p']},');
+    if (colors.isNotEmpty) {
+      p['color'] = colors[0];
     }
-    // check to see if BoxDecoration is needed
-    if (p['shape'] != null ||
-        p['b'] != null ||
-        p['r'] != null ||
-        p['s'] != null) {
-      code.add('  decoration: BoxDecoration(');
-      if (extractor.extractedColors.isNotEmpty) {
-        code.add('    color: ${extractor.extractedColors[0]},');
-      }
-      if (p['shape'] != null) {
-        code.add('    shape: BoxShape.${p['shape']},');
-      }
-      if (p['b'] != null) {
-        code.add('    border: ${p['b']},');
-      }
-      if (p['r'] != null) {
-        code.add('    borderRadius: BorderRadius.circular(${p['r']}),');
-      }
-      if (p['s'] != null) {
-        code.add('    boxShadow: ${p['s']},');
-      }
-      code.add('  ),');
-    }
+    final needsBoxDecoration = p['shape'] != null ||
+        p['border'] != null ||
+        p['borderRadius'] != null ||
+        p['boxShadow'] != null;
+
+    final code = constructDartCode([
+      'Container',
+      'width',
+      'height',
+      'padding',
+      if (!needsBoxDecoration)
+        'color'
+      else
+        [
+          'decoration: BoxDecoration',
+          'color',
+          'shape',
+          'border',
+          'borderRadius',
+          'boxShadow'
+        ],
+    ], p);
 
     if (children.length > 1) {
       throw 'Container can only have one child';
     }
     if (children.length == 1) {
-      final childDartCode = children[0].toDartCode('container');
-      code.add('  child: ${childDartCode[0]}');
-      for (final line in childDartCode.sublist(1)) {
-        code.add('  $line');
-      }
+      insertChildCode(code, children[0], 'container');
     }
-    code.add('),');
 
     return code;
   }

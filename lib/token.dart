@@ -4,7 +4,7 @@ enum TokenType {
   comma,
   text, // text widget (e.g. 'Sample text' red 36 w700)
   widgetName,
-  word,
+  property,
   number,
 }
 

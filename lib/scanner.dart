@@ -43,13 +43,13 @@ class _Scanner {
         text();
         break;
       case '#':
-        word();
+        property();
         break;
       default:
         if (isDigit(char)) {
           number();
         } else if (isAlpha(char)) {
-          word();
+          property();
         } else if (isWhitespace(char)) {
           // ignore
         } else {
@@ -81,19 +81,18 @@ class _Scanner {
     addToken(TokenType.number, number, line, start);
   }
 
-  void word() {
-    // scan word token
+  void property() {
     final start = current - 1;
-    String word = previous();
+    String property = previous();
     const allowedSymbols = ['_', '#', '*', '.', '&'];
     while (
         isAlpha(peek()) || isDigit(peek()) || allowedSymbols.contains(peek())) {
-      word += advance();
+      property += advance();
     }
-    if (widgets.keys.contains(word)) {
-      addToken(TokenType.widgetName, word, line, start);
+    if (widgets.keys.contains(property)) {
+      addToken(TokenType.widgetName, property, line, start);
     } else {
-      addToken(TokenType.word, word, line, start);
+      addToken(TokenType.property, property, line, start);
     }
   }
 

@@ -1,19 +1,28 @@
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/token.dart';
 
+class EnumProperty {
+  final String propName;
+  final String enumName;
+  final List<String> values;
+
+  EnumProperty(this.propName, this.enumName, this.values);
+}
+
 class NamedProperty {
-  final String name;
+  final String code;
+  final String actualName;
   final String Function(String) toDartCode;
 
-  NamedProperty(this.name, this.toDartCode);
+  NamedProperty(this.code, this.actualName, this.toDartCode);
 
-  factory NamedProperty.i(String name) {
-    return NamedProperty(name, (s) => s);
+  factory NamedProperty.i(String code, String actualName) {
+    return NamedProperty(code, actualName, (s) => s);
   }
 }
 
 class PropertyExtractor {
-  final Map<String, List<String>> enums;
+  final List<EnumProperty> enums;
   final List<NamedProperty>
       namedProperties; // order from longest to shortest name
 
@@ -39,9 +48,9 @@ class PropertyExtractor {
   }
 
   bool _tryEnum(String str) {
-    for (final propName in enums.keys) {
-      if (enums[propName]!.contains(str)) {
-        extractedProps[propName] = str;
+    for (final enumProp in enums) {
+      if (enumProp.values.contains(str)) {
+        extractedProps[enumProp.propName] = '${enumProp.enumName}.$str';
         return true;
       }
     }
@@ -61,10 +70,10 @@ class PropertyExtractor {
   }
 
   bool _tryNamedProp(String str) {
-    for (final prop in namedProperties) {
-      if (str.startsWith(prop.name)) {
-        extractedProps[prop.name] =
-            prop.toDartCode(str.substring(prop.name.length));
+    for (final namedProp in namedProperties) {
+      if (str.startsWith(namedProp.code)) {
+        extractedProps[namedProp.actualName] =
+            namedProp.toDartCode(str.substring(namedProp.code.length));
         return true;
       }
     }

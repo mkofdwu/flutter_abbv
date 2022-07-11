@@ -119,7 +119,7 @@ String borderToDartCode(String source) {
     if (sc.isAtEnd()) break;
     sc.consume('&', 'Expected & in border prop, got ${sc.peek()}');
   }
-  return 'Border.all(color $color, width: $width, style: BorderStyle.$borderStyle)';
+  return 'Border.all(color: $color, width: $width, style: BorderStyle.$borderStyle)';
 }
 
 String shadowToDartCode(String source) {
