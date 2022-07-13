@@ -3,6 +3,7 @@ import 'scanner.dart';
 String scanColor(SimpleScanner sc) {
   // assumes # has already been consumed
   String dartCode;
+  // FIXME: if color hex starts with letter (e.g. fff), it will be interpreted as a named color
   if (SimpleScanner.isAlpha(sc.peek())) {
     final colorName = sc.word();
     dartCode = 'Colors.$colorName';
@@ -15,7 +16,7 @@ String scanColor(SimpleScanner sc) {
   if (sc.match('*')) {
     // alpha value
     sc.consumeString('0.', 'Alpha component must be a value <1 and >0');
-    dartCode += '.withAlpha(0.${sc.sequence(SimpleScanner.isDigit)})';
+    dartCode += '.withOpacity(0.${sc.sequence(SimpleScanner.isDigit)})';
   }
 
   return dartCode;

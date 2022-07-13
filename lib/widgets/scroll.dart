@@ -3,7 +3,7 @@ import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/widgets/base_widget.dart';
 
-final directionEnum = ['vertical', 'horizontal'];
+final directionEnum = {'vertical': 'vertical', 'horizontal': 'horizontal'};
 
 class SingleChildScrollView extends Widget {
   SingleChildScrollView(super.properties, super.children);
@@ -12,7 +12,7 @@ class SingleChildScrollView extends Widget {
   List<String> toDartCode(String parentName) {
     final extractor = PropertyExtractor(
       enums: [
-        EnumProperty('reverse', '', ['reverse']),
+        EnumProperty('reverse', '', {'rev': 'reverse'}),
         EnumProperty('direction', 'Axis', directionEnum),
       ],
       namedProperties: [

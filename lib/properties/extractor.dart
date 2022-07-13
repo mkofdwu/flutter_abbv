@@ -4,7 +4,7 @@ import 'package:flutter_abbv/token.dart';
 class EnumProperty {
   final String propName;
   final String enumName;
-  final List<String> values;
+  final Map<String, String> values;
 
   EnumProperty(this.propName, this.enumName, this.values);
 }
@@ -49,8 +49,9 @@ class PropertyExtractor {
 
   bool _tryEnum(String str) {
     for (final enumProp in enums) {
-      if (enumProp.values.contains(str)) {
-        extractedProps[enumProp.propName] = '${enumProp.enumName}.$str';
+      if (enumProp.values.containsKey(str)) {
+        final actualValue = enumProp.values[str];
+        extractedProps[enumProp.propName] = '${enumProp.enumName}.$actualValue';
         return true;
       }
     }

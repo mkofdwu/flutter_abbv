@@ -7,7 +7,7 @@ import 'package:flutter_abbv/token.dart';
 
 import 'base_widget.dart';
 
-final shapeEnum = ['rectangle', 'circle'];
+final shapeEnum = {'rect': 'rectangle', 'circle': 'circle'};
 
 class Container extends Widget {
   Container(List<Token> properties, List<Widget> children)

@@ -1,5 +1,7 @@
 import 'package:flutter_abbv/token.dart';
 import 'package:flutter_abbv/widgets/widgets.dart';
+import 'package:flutter_abbv/widgets/text.dart';
+import 'package:flutter_abbv/widgets/sizedbox.dart';
 
 class ParseError extends Error {
   String message;

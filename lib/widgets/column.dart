@@ -20,7 +20,7 @@ final maxisAbbv = {
   'se': 'spaceEvenly',
 };
 
-final msizeEnum = ['min', 'max'];
+final msizeEnum = {'min': 'min', 'max': 'max'};
 
 class Column extends Widget {
   Column(List<Token> properties, List<Widget> children)
