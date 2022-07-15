@@ -40,7 +40,9 @@ class Parser {
 
   List<Token> widgetProps() {
     final properties = <Token>[];
-    while (check(TokenType.property) || check(TokenType.number)) {
+    while (check(TokenType.property) ||
+        check(TokenType.number) ||
+        check(TokenType.variable)) {
       properties.add(advance());
     }
     return properties;

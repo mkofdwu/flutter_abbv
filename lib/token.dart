@@ -6,6 +6,7 @@ enum TokenType {
   widgetName,
   property,
   number,
+  variable,
 }
 
 class Token {

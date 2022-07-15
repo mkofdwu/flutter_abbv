@@ -11,18 +11,28 @@ class ListView extends Widget {
 
   @override
   List<String> toDartCode(String parentName) {
-    final extractor = PropertyExtractor(enums: [], namedProperties: []);
+    final extractor = PropertyExtractor(
+      variables: ['items', 'controller'],
+      enums: [],
+      namedProperties: [],
+    );
     extractor.extractProps(properties);
     final p = extractor.extractedProps;
 
-    if (extractor.extractedNumbers.isNotEmpty) {
-      p['flex'] = extractor.extractedNumbers[0];
+    if (p.containsKey('items')) {
+      p['itemCount'] = '${p['items']}.length';
+      p['itemBuilder'] = '(context, i) {}';
     }
 
     final code = constructDartCode([
-      'Spacer',
-      'flex',
+      'ListView',
+      'controller',
+      'itemCount',
+      'itemBuilder',
     ], p);
+    if (children.isNotEmpty) {
+      insertChildrenCode(code, children, 'listview');
+    }
 
     return code;
   }

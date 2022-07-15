@@ -43,7 +43,11 @@ class _Scanner {
         text();
         break;
       case '#':
+        // color
         property();
+        break;
+      case '\$':
+        variable();
         break;
       default:
         if (isDigit(char)) {
@@ -94,6 +98,18 @@ class _Scanner {
     } else {
       addToken(TokenType.property, property, line, start);
     }
+  }
+
+  void variable() {
+    final start = current;
+    if (!isAlpha(peek()) && peek() != '_') {
+      throw 'Variable names must start with a letter or underscore, got ${peek()}';
+    }
+    advance();
+    while (isAlpha(peek()) || isDigit(peek()) || peek() == '_') {
+      advance();
+    }
+    addToken(TokenType.variable, source.substring(start, current), line, start);
   }
 
   static bool isDigit(String char) {

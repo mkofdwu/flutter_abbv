@@ -22,6 +22,8 @@ class NamedProperty {
 }
 
 class PropertyExtractor {
+  final List<String>
+      variables; // in order of importance (e.g. if only one variable is supplied only the first var name is used)
   final List<EnumProperty> enums;
   final List<NamedProperty>
       namedProperties; // order from longest to shortest name
@@ -29,8 +31,10 @@ class PropertyExtractor {
   Map<String, String> extractedProps = {};
   List<String> extractedNumbers = [];
   List<String> extractedColors = [];
+  List<String> _extractedVariables = [];
 
   PropertyExtractor({
+    this.variables = const [],
     required this.enums,
     required this.namedProperties,
   });
@@ -41,9 +45,16 @@ class PropertyExtractor {
 
       if (_tryEnum(str)) continue;
       if (_tryNumberOrColor(prop)) continue;
+      if (_tryVariable(prop)) continue;
       if (_tryNamedProp(str)) continue;
 
       throw 'Invalid property $str'; // TODO: improve error message
+    }
+    if (_extractedVariables.length > variables.length) {
+      throw 'Too many variables supplied, maximum ${variables.length}';
+    }
+    for (int i = 0; i < _extractedVariables.length; i++) {
+      extractedProps[variables[i]] = _extractedVariables[i];
     }
   }
 
@@ -65,6 +76,14 @@ class PropertyExtractor {
     }
     if (prop.lexeme.startsWith('#')) {
       extractedColors.add(colorToDartCode(prop.lexeme.substring(1)));
+      return true;
+    }
+    return false;
+  }
+
+  bool _tryVariable(Token prop) {
+    if (prop.type == TokenType.variable) {
+      _extractedVariables.add(prop.lexeme);
       return true;
     }
     return false;
