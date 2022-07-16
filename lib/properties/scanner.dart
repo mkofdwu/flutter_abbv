@@ -79,14 +79,15 @@ class SimpleScanner {
   }
 
   void consume(String expected, String failMessage) {
-    if (advance() != expected) {
+    if (isAtEnd() || advance() != expected) {
       // throw ScanError(failMessage);
       throw failMessage;
     }
   }
 
   void consumeString(String expected, String failMessage) {
-    if (source.substring(current, current + expected.length) != expected) {
+    if (current + expected.length > source.length ||
+        source.substring(current, current + expected.length) != expected) {
       throw failMessage;
     }
     current += expected.length;

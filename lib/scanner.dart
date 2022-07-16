@@ -113,10 +113,12 @@ class _Scanner {
   }
 
   static bool isDigit(String char) {
+    if (char.isEmpty) return false;
     return char.codeUnitAt(0) >= 48 && char.codeUnitAt(0) <= 57;
   }
 
   static bool isAlpha(String char) {
+    if (char.isEmpty) return false;
     return (char.codeUnitAt(0) >= 65 && char.codeUnitAt(0) <= 90) ||
         (char.codeUnitAt(0) >= 97 && char.codeUnitAt(0) <= 122) ||
         char == '_';
@@ -153,7 +155,7 @@ class _Scanner {
   }
 
   void consume(String expected, String failMessage) {
-    if (advance() != expected) {
+    if (isAtEnd() || advance() != expected) {
       throw ScanError(failMessage);
     }
   }
