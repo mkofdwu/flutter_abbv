@@ -1,22 +1,23 @@
+import 'package:flutter_abbv/config.dart';
+
 import 'scanner.dart';
 
-String scanColor(SimpleScanner sc) {
+String scanColor(StringScanner sc) {
   // assumes # has already been consumed
   String dartCode;
-  // FIXME: if color hex starts with letter (e.g. fff), it will be interpreted as a named color
-  if (SimpleScanner.isAlpha(sc.peek())) {
-    final colorName = sc.word();
-    dartCode = 'Colors.$colorName';
+  // check color hex first before named color
+  final colorHex = sc.sequence(StringScanner.isHexChar);
+  if (colorHex.length == 3 || colorHex.length == 6) {
+    dartCode = 'Color(0xff${colorHex.length == 3 ? colorHex * 2 : colorHex})';
   } else {
-    // expects hex value
-    final colorHex = sc.sequence(SimpleScanner.isHexChar);
-    dartCode = 'Color(0xff$colorHex)';
+    final colorName = sc.word();
+    dartCode = '${Config().colorPaletteName}.$colorName';
   }
 
   if (sc.match('*')) {
     // alpha value
     sc.consumeString('0.', 'Alpha component must be a value <1 and >0');
-    dartCode += '.withOpacity(0.${sc.sequence(SimpleScanner.isDigit)})';
+    dartCode += '.withOpacity(0.${sc.sequence(StringScanner.isDigit)})';
   }
 
   return dartCode;
@@ -24,13 +25,13 @@ String scanColor(SimpleScanner sc) {
 
 String colorToDartCode(String color) {
   // assumes # has already been consumed
-  final sc = SimpleScanner(color);
+  final sc = StringScanner(color);
   return scanColor(sc);
 }
 
 String paddingToDartCode(String source) {
   // source doesnt contain the first 'p' char
-  final sc = SimpleScanner(source);
+  final sc = StringScanner(source);
   int? left;
   int? top;
   int? right;
@@ -100,7 +101,7 @@ String paddingToDartCode(String source) {
 
 String borderToDartCode(String source) {
   // source doesnt contain the first 'b' char
-  final sc = SimpleScanner(source);
+  final sc = StringScanner(source);
   String? color;
   int width = 1;
   String? borderStyle;
@@ -110,7 +111,7 @@ String borderToDartCode(String source) {
         color = scanColor(sc);
         break;
       default:
-        if (SimpleScanner.isDigit(sc.peek())) {
+        if (StringScanner.isDigit(sc.peek())) {
           width = sc.number();
         } else {
           borderStyle = sc.word();
@@ -124,7 +125,7 @@ String borderToDartCode(String source) {
 }
 
 String shadowToDartCode(String source) {
-  final sc = SimpleScanner(source);
+  final sc = StringScanner(source);
   List<int> numbers = [];
   String? color;
   while (true) {

@@ -26,7 +26,7 @@ WidgetConstructor desugarWrapInPadding(WidgetConstructor original) {
       final str = prop.lexeme;
       if (prop.type == TokenType.property &&
           str[0] == 'p' &&
-          (('ltrbhv'.contains(str[1]) || SimpleScanner.isDigit(str[1])))) {
+          (('ltrbhv'.contains(str[1]) || StringScanner.isDigit(str[1])))) {
         return Padding(
           [prop],
           [

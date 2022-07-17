@@ -1,9 +1,9 @@
-class SimpleScanner {
+class StringScanner {
   final String source;
 
   int current = 0; // current position in source
 
-  SimpleScanner(this.source);
+  StringScanner(this.source);
 
   int number() {
     final start = current;
