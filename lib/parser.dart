@@ -25,7 +25,8 @@ class Parser {
     if (check(TokenType.text)) {
       final text = advance();
       final properties = widgetProps();
-      return Text(text.lexeme, properties);
+      final builder = desugarWrapInPadding((p, c) => (Text(text.lexeme, p)));
+      return builder(properties, []);
     }
     if (check(TokenType.number)) {
       final size = int.parse(advance().lexeme);
