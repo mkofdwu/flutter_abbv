@@ -3,7 +3,7 @@ import 'package:flutter_abbv/scanner.dart';
 
 void main() {
   final tokens = scanTokens(
-      'container #green b2 sh#black*0.2,0,14,30 r10 p12 \'Hello world\'');
+      "'The quick brown fox jumps over the lazy dog' 16 w700 #grey i cent sp1.4 max2 oe sh#black*0.1,10 up");
   final tree = Parser(tokens).widget();
   print(tree.toDartCode('').join('\n'));
 }

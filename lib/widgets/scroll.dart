@@ -14,7 +14,7 @@ class SingleChildScrollView extends Widget {
     final extractor = PropertyExtractor(
       enums: [
         EnumProperty('reverse', '', {'rev': 'reverse'}),
-        EnumProperty('direction', 'Axis', directionEnum),
+        EnumProperty('scrollDirection', 'Axis', directionEnum),
       ],
       namedProperties: [
         NamedProperty('p', 'padding', paddingToDartCode),
@@ -29,7 +29,7 @@ class SingleChildScrollView extends Widget {
     final code = constructDartCode([
       'SingleChildScrollView',
       'reverse',
-      'direction',
+      'scrollDirection',
       'padding',
     ], p);
     if (children.length != 1) {

@@ -21,7 +21,7 @@ final weightEnum = {
 };
 final alignEnum = {
   'left': 'left',
-  'center': 'center',
+  'cent': 'center',
   'right': 'right',
   'justify': 'justify',
 };
@@ -53,7 +53,7 @@ class Text extends Widget {
         NamedProperty.i('sp', 'letterSpacing'),
         NamedProperty(
             'o', 'overflow', (s) => 'TextOverflow.${overflowAbbv[s]!}'),
-        NamedProperty('s', 'shadows', shadowToDartCode),
+        NamedProperty('sh', 'shadows', shadowToDartCode),
       ],
     );
     extractor.extractProps(properties);
@@ -75,6 +75,10 @@ class Text extends Widget {
     }
     if (colors.length == 1) {
       p['color'] = colors[0];
+    }
+    if (p.containsKey('shadows')) {
+      // kind of hacky
+      p['shadows'] = p['shadows']!.replaceFirst('BoxShadow', 'Shadow');
     }
 
     final textSkeleton = [

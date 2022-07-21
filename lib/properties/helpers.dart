@@ -41,7 +41,8 @@ String paddingToDartCode(String source) {
   int? horizontal;
   int? vertical;
   while (!sc.isAtEnd()) {
-    switch (sc.advance()) {
+    final char = sc.advance();
+    switch (char) {
       case 'l':
         left = sc.number();
         break;
@@ -64,9 +65,15 @@ String paddingToDartCode(String source) {
         // ignore
         break;
       default:
+        if (!StringScanner.isDigit(char)) {
+          throw InvalidPropertyError(
+            source,
+            'Invalid character $char, expected one of `ltrbhv` or a number',
+          );
+        }
         final numbers = [];
         while (true) {
-          numbers.add(sc.number());
+          numbers.add(sc.number(offset: -1));
           if (sc.isAtEnd()) break;
           sc.consume(',', 'Expected comma in padding, got ${sc.peek()}');
         }
@@ -125,11 +132,15 @@ String borderToDartCode(String source) {
     if (sc.isAtEnd()) break;
     sc.consume(',', 'Expected comma in border prop, got ${sc.peek()}');
   }
-  return 'Border.all(color: $color, width: $width, style: BorderStyle.$borderStyle)';
+  final borderProps = [
+    if (color != null) 'color: $color',
+    'width: $width',
+    if (borderStyle != null) 'style: BorderStyle.$borderStyle',
+  ].join(', ');
+  return 'Border.all($borderProps)';
 }
 
 String shadowToDartCode(String source) {
-  print(source);
   final sc = StringScanner(source);
   List<int> numbers = [];
   String? color;

@@ -1,5 +1,3 @@
-import 'package:flutter_abbv/properties/constructors.dart';
-import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/token.dart';
 
 import 'base_widget.dart';

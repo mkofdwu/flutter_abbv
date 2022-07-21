@@ -23,7 +23,7 @@ To define a list of widgets, wrap in parentheses and separate with semicolons, e
 
 This expands to:
 
-```
+```dart
 Scaffold(
   backgroundColor: Colors.black,
   body: Padding(
