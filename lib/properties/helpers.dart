@@ -109,13 +109,14 @@ String borderToDartCode(String source) {
   int width = 1;
   String? borderStyle;
   while (true) {
-    switch (sc.advance()) {
+    final char = sc.advance();
+    switch (char) {
       case '#':
         color = scanColor(sc);
         break;
       default:
-        if (StringScanner.isDigit(sc.peek())) {
-          width = sc.number();
+        if (StringScanner.isDigit(char)) {
+          width = sc.number(offset: -1);
         } else {
           borderStyle = sc.word();
         }
@@ -133,17 +134,16 @@ String shadowToDartCode(String source) {
   List<int> numbers = [];
   String? color;
   while (true) {
-    switch (sc.advance()) {
+    final char = sc.advance();
+    switch (char) {
       case '#':
         color = scanColor(sc);
-        print('color $color');
         break;
       default:
-        if (StringScanner.isDigit(sc.peek())) {
-          numbers.add(sc.number());
-          print('number ${numbers.last}');
+        if (StringScanner.isDigit(char)) {
+          numbers.add(sc.number(offset: -1));
         } else {
-          throw InvalidPropertyError(source, 'Unexpected char ${sc.peek()}');
+          throw InvalidPropertyError(source, 'Unexpected character $char');
         }
         break;
     }

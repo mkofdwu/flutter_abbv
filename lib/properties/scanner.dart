@@ -5,8 +5,8 @@ class StringScanner {
 
   StringScanner(this.source);
 
-  int number() {
-    final start = current;
+  int number({int offset = 0}) {
+    final start = current + offset; // if just checked for digit offset is -1
     while (isDigit(peek())) {
       advance();
     }
