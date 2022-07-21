@@ -9,7 +9,7 @@ VSCode: Download and install the .vsix file
 
 ## Usage
 
-In a dart file, prefix each abbrevation with an `@` symbol.
+In a dart file, prefix each abbrevation with an `@` symbol. For example, type `@container` and press ctrl+space, a suggestion for `Container()` should show up. For subsequent examples in these docs, the leading `@` will be omitted, just remember to include it.
 
 Each abbrevation has the format {widget name} {properties} {children}, like: `container 100 100 #red r10` -> Container of width and height 100, red color and border radius 10. Note that the order of the properties does not matter.
 
