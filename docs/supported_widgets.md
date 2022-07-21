@@ -262,15 +262,15 @@ Shadows follow the same format as [shadows in Container](#shadow)
 Text(
   'The quick brown fox jumps over the lazy dog'.toUpperCase(),
   textAlign: TextAlign.center,
-  letterSpacing: 1.4,
   maxLines: 2,
   overflow: TextOverflow.ellipsis,
-  shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),],
   style: TextStyle(
     color: Colors.grey,
     fontSize: 16,
     fontWeight: FontWeight.w700,
     fontStyle: FontStyle.italic,
+    letterSpacing: 1.4,
+    shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),],
   ),
 ),
 ```

@@ -84,11 +84,17 @@ class Text extends Widget {
     final textSkeleton = [
       'Text',
       'textAlign',
-      'letterSpacing',
       'maxLines',
       'overflow',
-      'shadows',
-      ['style: TextStyle', 'color', 'fontSize', 'fontWeight', 'fontStyle'],
+      [
+        'style: TextStyle',
+        'color',
+        'fontSize',
+        'fontWeight',
+        'fontStyle',
+        'letterSpacing',
+        'shadows',
+      ],
     ];
     final code = constructDartCode(textSkeleton, p);
     code.insert(1, "  '$text'${p['case'] == '.up' ? '.toUpperCase()' : ''},");
