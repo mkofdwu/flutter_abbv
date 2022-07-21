@@ -46,7 +46,7 @@ The shadow property requires a color and 1, 3, or 4 numbers
 
 ```dart
 Container(
-  padding: EdgeInsets.all(2),
+  padding: EdgeInsets.all(12),
   decoration: BoxDecoration(
     color: Colors.green,
     border: Border.all(width: 2),
