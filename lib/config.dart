@@ -8,4 +8,5 @@ class Config {
   }
 
   String colorPaletteName = 'Colors';
+  String iconSetName = 'Icons';
 }

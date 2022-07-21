@@ -1,3 +1,4 @@
+import 'package:flutter_abbv/config.dart';
 import 'package:flutter_abbv/properties/constructors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/widgets/base_widget.dart';
@@ -18,7 +19,7 @@ class Icon extends Widget {
       p['color'] = extractor.extractedColors[0];
     }
     final code = constructDartCode(['Icon', 'size', 'color'], p);
-    code.insert(1, '  Icons.${properties[0].lexeme},');
+    code.insert(1, '  ${Config().iconSetName}.${properties[0].lexeme},');
     return code;
   }
 }

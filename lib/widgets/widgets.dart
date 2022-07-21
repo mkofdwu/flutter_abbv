@@ -13,6 +13,7 @@ import 'spacer.dart';
 import 'align.dart';
 import 'expanded.dart';
 import 'padding.dart';
+import 'placeholder.dart';
 
 export 'base_widget.dart';
 
@@ -55,6 +56,7 @@ final Map<String, Widget Function(List<Token>, List<Widget>)> widgets = {
   'expanded': (p, c) => Expanded(p, c),
   'spacer': (p, c) => Spacer(p, c),
   'pad': (p, c) => Padding(p, c),
+  'placeholder': (p, c) => Placeholder(p, c),
   // 'image': (p, c) => Image(p, c),
   // 'listview': ListView,
   // 'listtile': ListTile,
