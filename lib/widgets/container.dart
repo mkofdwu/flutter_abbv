@@ -1,6 +1,7 @@
 // shitcode
 
 import 'package:flutter_abbv/properties/constructors.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/token.dart';
@@ -23,15 +24,21 @@ class Container extends Widget {
         NamedProperty('p', 'padding', paddingToDartCode),
         NamedProperty('b', 'border', borderToDartCode),
         NamedProperty('r', 'borderRadius', (s) => 'BorderRadius.circular($s)'),
-        NamedProperty('s', 'boxShadow', shadowToDartCode),
+        NamedProperty('sh', 'boxShadow', shadowToDartCode),
       ],
     );
     extractor.extractProps(properties);
     final p = Map<String, String>.from(extractor.extractedProps);
     final nums = extractor.extractedNumbers;
     final colors = extractor.extractedColors;
-    if (nums.length > 2) throw 'Container accepts at most 2 numbers';
-    if (colors.length > 1) throw 'Container only accepts one color';
+    if (nums.length > 2) {
+      throw InvalidPropertyError(
+          nums.toString(), 'Container accepts at most 2 numbers');
+    }
+    if (colors.length > 1) {
+      throw InvalidPropertyError(
+          colors.toString(), 'Container only accepts one color');
+    }
     if (nums.isNotEmpty) {
       p['width'] = nums[0];
       p['height'] = nums.length == 2 ? nums[1] : nums[0];
@@ -66,7 +73,7 @@ class Container extends Widget {
     ], p);
 
     if (children.length > 1) {
-      throw 'Container can only have one child';
+      throw ChildCountError('Container can only have one child');
     }
     if (children.length == 1) {
       insertChildCode(code, children[0], 'container');

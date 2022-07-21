@@ -1,4 +1,5 @@
 import 'package:flutter_abbv/properties/constructors.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/token.dart';
 
@@ -8,7 +9,7 @@ class Expanded extends Widget {
   Expanded(List<Token> properties, List<Widget> children)
       : super(properties, children) {
     if (children.length != 1) {
-      throw 'Expanded requires exactly one child';
+      throw ChildCountError('Expanded requires exactly one child');
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter_abbv/properties/constructors.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/token.dart';
@@ -60,8 +61,14 @@ class Text extends Widget {
     final nums = extractor.extractedNumbers;
     final colors = extractor.extractedColors;
 
-    if (nums.length > 1) throw 'Text only accepts one number';
-    if (colors.length > 1) throw 'Text only accepts one color';
+    if (nums.length > 1) {
+      throw InvalidPropertyError(
+          nums.toString(), 'Text only accepts one number');
+    }
+    if (colors.length > 1) {
+      throw InvalidPropertyError(
+          colors.toString(), 'Text only accepts one color');
+    }
 
     if (nums.length == 1) {
       p['fontSize'] = nums[0];

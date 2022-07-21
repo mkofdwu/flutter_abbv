@@ -1,1 +1,1 @@
-scroll column cs ('image', 36, row('janecooper' 36 w700 #red, 16, container #green 120 0 r14 pv10 center row min (icon add 24, 4, 'Add new' 16 bold)))
+scroll column cs ('image'; 36; row('janecooper' 36 w700 #red; 16; container #green 120 0 r14 pv10 center row min (icon add 24; 4; 'Add new' 16 bold)))

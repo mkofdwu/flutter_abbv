@@ -1,4 +1,5 @@
 import 'package:flutter_abbv/properties/constructors.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/token.dart';
 
@@ -20,7 +21,7 @@ class Align extends Widget {
   Align(List<Token> properties, List<Widget> children)
       : super(properties, children) {
     if (children.length != 1) {
-      throw 'Align requires exactly one child';
+      throw ChildCountError('Align requires exactly one child');
     }
   }
 

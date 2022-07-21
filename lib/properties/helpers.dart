@@ -1,4 +1,5 @@
 import 'package:flutter_abbv/config.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 
 import 'scanner.dart';
 
@@ -58,7 +59,7 @@ String paddingToDartCode(String source) {
       case 'v':
         vertical = sc.number();
         break;
-      case '&':
+      case ',':
         // ignore
         break;
       default:
@@ -66,7 +67,7 @@ String paddingToDartCode(String source) {
         while (true) {
           numbers.add(sc.number());
           if (sc.isAtEnd()) break;
-          sc.consume('&', 'Expected & in padding, got ${sc.peek()}');
+          sc.consume(',', 'Expected comma in padding, got ${sc.peek()}');
         }
         if (numbers.length == 1) {
           return 'EdgeInsets.all(${numbers[0]})';
@@ -77,7 +78,8 @@ String paddingToDartCode(String source) {
         if (numbers.length == 4) {
           return 'EdgeInsets.fromLTRB(${numbers.join(", ")})';
         }
-        throw 'You can only provide 1, 2 or 4 numbers to padding';
+        throw InvalidPropertyError(
+            source, 'You can only provide 1, 2 or 4 numbers to padding');
     }
   }
   if (left != null || top != null || right != null || bottom != null) {
@@ -96,7 +98,7 @@ String paddingToDartCode(String source) {
       if (vertical != null) 'vertical: $vertical',
     ].join(', ')})';
   }
-  throw 'No values passed to padding';
+  throw InvalidPropertyError(source, 'No values passed to padding');
 }
 
 String borderToDartCode(String source) {
@@ -119,12 +121,13 @@ String borderToDartCode(String source) {
         break;
     }
     if (sc.isAtEnd()) break;
-    sc.consume('&', 'Expected & in border prop, got ${sc.peek()}');
+    sc.consume(',', 'Expected comma in border prop, got ${sc.peek()}');
   }
   return 'Border.all(color: $color, width: $width, style: BorderStyle.$borderStyle)';
 }
 
 String shadowToDartCode(String source) {
+  print(source);
   final sc = StringScanner(source);
   List<int> numbers = [];
   String? color;
@@ -132,13 +135,19 @@ String shadowToDartCode(String source) {
     switch (sc.advance()) {
       case '#':
         color = scanColor(sc);
+        print('color $color');
         break;
       default:
-        numbers.add(sc.number());
+        if (StringScanner.isDigit(sc.peek())) {
+          numbers.add(sc.number());
+          print('number ${numbers.last}');
+        } else {
+          throw InvalidPropertyError(source, 'Unexpected char ${sc.peek()}');
+        }
         break;
     }
     if (sc.isAtEnd()) break;
-    sc.consume('&', 'Expected & in shadow prop, got ${sc.peek()}');
+    sc.consume(',', 'Expected comma in shadow prop, got ${sc.peek()}');
   }
   if (numbers.length == 1) {
     return '[BoxShadow(color: $color, blurRadius: ${numbers[0]}),]';
@@ -146,5 +155,6 @@ String shadowToDartCode(String source) {
   if (numbers.length == 3 || numbers.length == 4) {
     return '[BoxShadow(color: $color, offset: Offset(${numbers[0]}, ${numbers[1]}), blurRadius: ${numbers[2]},${numbers.length == 4 ? ' spreadRadius: ${numbers[3]},' : ''}),]';
   }
-  throw 'You can only provide 1, 3 or 4 numbers to shadow';
+  throw InvalidPropertyError(
+      source, 'You can only provide 1, 3 or 4 numbers to shadow');
 }

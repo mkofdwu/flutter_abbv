@@ -1,3 +1,4 @@
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/token.dart';
 
@@ -48,10 +49,13 @@ class PropertyExtractor {
       if (_tryVariable(prop)) continue;
       if (_tryNamedProp(str)) continue;
 
-      throw 'Invalid property $str'; // TODO: improve error message
+      throw InvalidPropertyError(str, 'Could not recognize');
     }
     if (_extractedVariables.length > variables.length) {
-      throw 'Too many variables supplied, maximum ${variables.length}';
+      throw InvalidPropertyError(
+        _extractedVariables.toString(),
+        'Too many variables supplied, maximum ${variables.length}',
+      );
     }
     for (int i = 0; i < _extractedVariables.length; i++) {
       extractedProps[variables[i]] = _extractedVariables[i];

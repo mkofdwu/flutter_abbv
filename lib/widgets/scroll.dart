@@ -1,4 +1,5 @@
 import 'package:flutter_abbv/properties/constructors.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
 import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/widgets/base_widget.dart';
@@ -32,7 +33,7 @@ class SingleChildScrollView extends Widget {
       'padding',
     ], p);
     if (children.length != 1) {
-      throw 'SingleChildScrollView accepts exactly 1 child';
+      throw ChildCountError('SingleChildScrollView accepts exactly 1 child');
     }
     insertChildCode(code, children[0], 'scroll');
 

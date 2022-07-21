@@ -1,3 +1,5 @@
+import 'package:flutter_abbv/properties/errors.dart';
+
 import 'base_widget.dart';
 
 class SizedBox extends Widget {
@@ -13,6 +15,6 @@ class SizedBox extends Widget {
     } else if (parentName == 'column') {
       return ['SizedBox(height: $size),'];
     }
-    throw 'Can only use SizedBox in a row or column';
+    throw ChildCountError('Can only use SizedBox in a row or column');
   }
 }

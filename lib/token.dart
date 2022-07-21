@@ -1,7 +1,7 @@
 enum TokenType {
   leftParen,
   rightParen,
-  comma,
+  semicolon,
   text, // text widget (e.g. 'Sample text' red 36 w700)
   widgetName,
   property,

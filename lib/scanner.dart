@@ -36,8 +36,8 @@ class _Scanner {
       case ')':
         addSingleCharToken(TokenType.rightParen);
         break;
-      case ',':
-        addSingleCharToken(TokenType.comma);
+      case ';':
+        addSingleCharToken(TokenType.semicolon);
         break;
       case "'":
         text();
@@ -57,7 +57,7 @@ class _Scanner {
         } else if (isWhitespace(char)) {
           // ignore
         } else {
-          throw 'Unexpected character: $char';
+          throw ScanError('Unexpected character: $char');
         }
         break;
     }
@@ -88,7 +88,7 @@ class _Scanner {
   void property() {
     final start = current - 1;
     String property = previous();
-    const allowedSymbols = ['_', '#', '*', '.', '&'];
+    const allowedSymbols = ['_', '#', '*', '.', ','];
     while (
         isAlpha(peek()) || isDigit(peek()) || allowedSymbols.contains(peek())) {
       property += advance();
@@ -103,7 +103,8 @@ class _Scanner {
   void variable() {
     final start = current;
     if (!isAlpha(peek()) && peek() != '_') {
-      throw 'Variable names must start with a letter or underscore, got ${peek()}';
+      throw ScanError(
+          'Variable names must start with a letter or underscore, got ${peek()}');
     }
     advance();
     while (isAlpha(peek()) || isDigit(peek()) || peek() == '_') {

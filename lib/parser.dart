@@ -55,7 +55,8 @@ class Parser {
       final children = <Widget>[];
       children.add(widget());
       while (!check(TokenType.rightParen) && !isAtEnd()) {
-        consume(TokenType.comma, 'Expect comma in widget list, got ${peek()}');
+        consume(TokenType.semicolon,
+            'Expected semicolon in widget list, got ${peek()}');
         children.add(widget());
       }
       consume(TokenType.rightParen, 'Missing closing parenthesis');

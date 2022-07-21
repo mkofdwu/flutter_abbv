@@ -1,12 +1,12 @@
 import 'package:flutter_abbv/properties/constructors.dart';
+import 'package:flutter_abbv/properties/errors.dart';
 import 'package:flutter_abbv/properties/extractor.dart';
-import 'package:flutter_abbv/properties/helpers.dart';
 import 'package:flutter_abbv/widgets/base_widget.dart';
 
 class Scaffold extends Widget {
   Scaffold(super.properties, super.children) {
     if (children.length > 2 || children.isEmpty) {
-      throw 'Scaffold accepts only 1 or 2 children';
+      throw ChildCountError('Scaffold accepts only 1 or 2 children');
     }
   }
 
