@@ -10,7 +10,8 @@ String scanColor(StringScanner sc) {
   if (colorHex.length == 3 || colorHex.length == 6) {
     dartCode = 'Color(0xff${colorHex.length == 3 ? colorHex * 2 : colorHex})';
   } else {
-    final colorName = sc.word();
+    // add colorHex in case it consumed some characters
+    final colorName = colorHex + sc.word();
     dartCode = '${Config().colorPaletteName}.$colorName';
   }
 
