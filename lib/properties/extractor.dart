@@ -28,16 +28,19 @@ class PropertyExtractor {
   final List<EnumProperty> enums;
   final List<NamedProperty>
       namedProperties; // order from longest to shortest name
+  final Map<String, String> simpleAbbvs;
 
   Map<String, String> extractedProps = {};
   List<String> extractedNumbers = [];
   List<String> extractedColors = [];
   List<String> _extractedVariables = [];
+  List<String> extraCode = []; // from simpleAbbvs
 
   PropertyExtractor({
     this.variables = const [],
     required this.enums,
     required this.namedProperties,
+    this.simpleAbbvs = const {},
   });
 
   void extractProps(List<Token> properties) {
@@ -48,6 +51,7 @@ class PropertyExtractor {
       if (_tryNumberOrColor(prop)) continue;
       if (_tryVariable(prop)) continue;
       if (_tryNamedProp(str)) continue;
+      if (_trySimpleAbbv(str)) continue;
 
       throw InvalidPropertyError(str, 'Could not recognize');
     }
@@ -100,6 +104,14 @@ class PropertyExtractor {
             namedProp.toDartCode(str.substring(namedProp.code.length));
         return true;
       }
+    }
+    return false;
+  }
+
+  bool _trySimpleAbbv(String str) {
+    if (simpleAbbvs.containsKey(str)) {
+      extraCode.add(simpleAbbvs[str]!);
+      return true;
     }
     return false;
   }

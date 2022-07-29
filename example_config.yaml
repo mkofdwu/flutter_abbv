@@ -1,0 +1,29 @@
+color_palette: AppColors
+icon_set: FluentIcons
+widgets:
+  Button:
+    code: button
+    text:
+      t:
+  Container:
+    code: container
+    space: $padding
+    overflow:
+      enum: TextOverflow
+      oe: ellipsis
+      oc: clip
+      of: fade
+    height:
+      h: '$'
+    radius:
+      r: 'BorderRadius.circular($)'
+    bigsq: 'width: 200, height: 200' # direct substitution, like a macro
+    _construct: # optional; by default just lumps all properties together
+      - width
+      - height
+      - color
+      - padding
+      - alignment
+      - decoration:
+          - radius
+          - border
