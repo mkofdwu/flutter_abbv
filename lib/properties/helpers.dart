@@ -91,7 +91,6 @@ String paddingToDartCode(String source) {
     }
   }
   if (left != null || top != null || right != null || bottom != null) {
-    // T at the end stands for transformed
     return 'EdgeInsets.only(${[
       if (left != null) 'left: $left, ',
       if (top != null) 'top: $top, ',
@@ -100,7 +99,6 @@ String paddingToDartCode(String source) {
     ].join(', ')})';
   }
   if (horizontal != null || vertical != null) {
-    // T at the end stands for transformed
     return 'EdgeInsets.symmetric(${[
       if (horizontal != null) 'horizontal: $horizontal',
       if (vertical != null) 'vertical: $vertical',

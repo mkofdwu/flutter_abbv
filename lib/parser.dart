@@ -1,6 +1,5 @@
 import 'package:flutter_abbv/token.dart';
 import 'package:flutter_abbv/widgets/widgets.dart';
-import 'package:flutter_abbv/widgets/text.dart';
 import 'package:flutter_abbv/widgets/sizedbox.dart';
 
 class ParseError extends Error {
@@ -22,12 +21,6 @@ class Parser {
   Parser(this.tokens);
 
   Widget widget() {
-    if (check(TokenType.text)) {
-      final text = advance();
-      final properties = widgetProps();
-      final builder = desugarWrapInPadding((p, c) => (Text(text.lexeme, p)));
-      return builder(properties, []);
-    }
     if (check(TokenType.number)) {
       final size = int.parse(advance().lexeme);
       return SizedBox(size);
@@ -43,7 +36,7 @@ class Parser {
     final properties = <Token>[];
     while (check(TokenType.property) ||
         check(TokenType.number) ||
-        check(TokenType.variable)) {
+        check(TokenType.dartCode)) {
       properties.add(advance());
     }
     return properties;
@@ -65,11 +58,6 @@ class Parser {
     // single child
     if (check(TokenType.widgetName)) {
       return [widget()];
-    }
-    if (check(TokenType.text)) {
-      final text = advance();
-      final properties = widgetProps();
-      return [Text(text.lexeme, properties)];
     }
     return [];
   }

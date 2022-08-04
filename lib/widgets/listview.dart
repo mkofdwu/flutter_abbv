@@ -12,7 +12,7 @@ class ListView extends Widget {
   @override
   List<String> toDartCode(String parentName) {
     final extractor = PropertyExtractor(
-      variables: ['items', 'controller'],
+      // variables: ['items', 'controller'],
       enums: [],
       namedProperties: [],
     );

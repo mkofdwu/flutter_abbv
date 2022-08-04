@@ -14,6 +14,7 @@ import 'align.dart';
 import 'expanded.dart';
 import 'padding.dart';
 import 'placeholder.dart';
+import 'text.dart';
 
 export 'base_widget.dart';
 
@@ -45,6 +46,7 @@ WidgetConstructor desugarWrapInPadding(WidgetConstructor original) {
 
 final Map<String, Widget Function(List<Token>, List<Widget>)> widgets = {
   // (p, c) stand for (properties, children)
+  'T': desugarWrapInPadding((p, c) => Text(p)),
   'container': (p, c) => Container(p, c),
   'row': desugarWrapInPadding((p, c) => Row(p, c)),
   'column': desugarWrapInPadding((p, c) => Column(p, c)),

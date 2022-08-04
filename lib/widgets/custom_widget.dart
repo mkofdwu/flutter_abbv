@@ -9,6 +9,7 @@ class CustomWidget extends Widget {
   final List<EnumProperty> enums;
   final List<NamedProperty> namedProperties;
   final Map<String, String> simpleAbbvs;
+  final List<String> variables;
   final List<dynamic>? skeleton;
 
   CustomWidget(
@@ -16,10 +17,11 @@ class CustomWidget extends Widget {
     this.enums,
     this.namedProperties,
     this.simpleAbbvs,
-    List<Token> properties,
-    List<Widget> children, {
+    this.variables,
     this.skeleton,
-  }) : super(properties, children);
+    List<Token> properties,
+    List<Widget> children,
+  ) : super(properties, children);
 
   @override
   List<String> toDartCode(String parentName) {
@@ -30,18 +32,61 @@ class CustomWidget extends Widget {
     );
     extractor.extractProps(properties);
     final p = extractor.extractedProps;
-    p['color'] = extractor.extractedColors.single;
-    p['color'] = extractor.extractedNumbers.single;
+    if (extractor.extractedColors.isNotEmpty) {
+      p['color'] = extractor.extractedColors.single;
+    }
+    // NOTE: unlabelled numbers arent used for custom widgets
+    final extractedDartCode = extractor.extractedDartCode;
+    print(variables);
+    // for a custom widget, all dart code (named or unnamed) is a property
+    // in order of importance (e.g. if only one variable is supplied only the first var name is used)
+    for (int i = 0; i < extractedDartCode.length; i++) {
+      p[variables[i]] = extractedDartCode[i];
+    }
 
-    // TODO: allow specifying numbers
+    final code = constructDartCode(
+      skeleton != null
+          ? _yamlToSkeleton(skeleton!)
+          : [
+              name,
+              ...p.keys, // for custom widget everything is used as a property
+            ],
+      p,
+    );
+    code.addAll(extractor.extraCode);
+    if (children.length == 1) {
+      insertChildCode(code, children.single, parentName);
+    } else if (children.length > 1) {
+      insertChildrenCode(code, children, parentName);
+    }
+    return code;
+  }
 
-    final sk = skeleton ??
-        [
-          name,
-          ...enums.map((e) => e.propName),
-          ...namedProperties.map((p) => p.actualName),
-        ];
+  List<dynamic> _yamlToSkeleton(List<dynamic> yamlSkeleton) {
+    // yaml represets subtrees as maps instead of lists
+    // Example:
+    // ===========================
+    // _construct:
+    //   - width
+    //   - height
+    //   - color
+    //   - decoration:
+    //       - BoxDecoration
+    //       - radius
+    //       - border
+    //
+    // yaml data: ['width', 'height', 'color', {'decoration': ['BoxDecoration', 'radius', 'border']}]
+    //
+    // This is converted into: ['width', 'height', 'color', ['decoration: BoxDecoration', 'radius', 'border']]
 
-    return constructDartCode(sk, p);
+    return yamlSkeleton.map((e) {
+      if (e is Map) {
+        final propName = e.keys.single;
+        final subProps = e[propName];
+        assert(subProps is List<String>);
+        final objectName = (subProps as List<String>).removeAt(0);
+        return ['$propName: $objectName', ...subProps];
+      }
+    }).toList();
   }
 }

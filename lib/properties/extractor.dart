@@ -23,8 +23,6 @@ class NamedProperty {
 }
 
 class PropertyExtractor {
-  final List<String>
-      variables; // in order of importance (e.g. if only one variable is supplied only the first var name is used)
   final List<EnumProperty> enums;
   final List<NamedProperty>
       namedProperties; // order from longest to shortest name
@@ -33,11 +31,10 @@ class PropertyExtractor {
   Map<String, String> extractedProps = {};
   List<String> extractedNumbers = [];
   List<String> extractedColors = [];
-  List<String> _extractedVariables = [];
+  List<String> extractedDartCode = [];
   List<String> extraCode = []; // from simpleAbbvs
 
   PropertyExtractor({
-    this.variables = const [],
     required this.enums,
     required this.namedProperties,
     this.simpleAbbvs = const {},
@@ -49,20 +46,11 @@ class PropertyExtractor {
 
       if (_tryEnum(str)) continue;
       if (_tryNumberOrColor(prop)) continue;
-      if (_tryVariable(prop)) continue;
+      if (_tryDartCode(prop)) continue;
       if (_tryNamedProp(str)) continue;
       if (_trySimpleAbbv(str)) continue;
 
       throw InvalidPropertyError(str, 'Could not recognize');
-    }
-    if (_extractedVariables.length > variables.length) {
-      throw InvalidPropertyError(
-        _extractedVariables.toString(),
-        'Too many variables supplied, maximum ${variables.length}',
-      );
-    }
-    for (int i = 0; i < _extractedVariables.length; i++) {
-      extractedProps[variables[i]] = _extractedVariables[i];
     }
   }
 
@@ -89,9 +77,9 @@ class PropertyExtractor {
     return false;
   }
 
-  bool _tryVariable(Token prop) {
-    if (prop.type == TokenType.variable) {
-      _extractedVariables.add(prop.lexeme);
+  bool _tryDartCode(Token prop) {
+    if (prop.type == TokenType.dartCode) {
+      extractedDartCode.add(prop.lexeme);
       return true;
     }
     return false;

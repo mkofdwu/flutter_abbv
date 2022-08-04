@@ -39,21 +39,21 @@ class _Scanner {
       case ';':
         addSingleCharToken(TokenType.semicolon);
         break;
-      case "'":
+      case '{': // code can contain strings as well
+        dartCode();
+        break;
+      case "'": // '...' is desugared to {'...'}
         text();
         break;
       case '#':
         // color
-        property();
-        break;
-      case '\$':
-        variable();
+        propertyOrWidget();
         break;
       default:
         if (isDigit(char)) {
           number();
         } else if (isAlpha(char)) {
-          property();
+          propertyOrWidget();
         } else if (isWhitespace(char)) {
           // ignore
         } else {
@@ -63,16 +63,53 @@ class _Scanner {
     }
   }
 
-  void text() {
-    // scan text token
-    final start = current - 1;
+  void _consumeDartCode() {
+    // to allow maps in dart code
+    // this would work most of the time
+    int bracketCount = 1;
+    while (!isAtEnd()) {
+      advance();
+
+      if (peek() == '{') {
+        bracketCount++;
+      } else if (peek() == '}') {
+        bracketCount--;
+        if (bracketCount == 0) break;
+      }
+    }
+    consume('}', "Expected '}'");
+  }
+
+  void dartCode() {
+    // lexeme extracted does not contain braces
+    final start = current;
     final startLine = line;
-    String text = '';
+    _consumeDartCode();
+    addToken(
+      TokenType.dartCode,
+      source.substring(start, current - 1),
+      startLine,
+      start,
+    );
+  }
+
+  void _consumeText() {
     while (peek() != "'" && !isAtEnd()) {
-      text += advance();
+      advance();
     }
     consume("'", 'Unterminated text expression');
-    addToken(TokenType.text, text, startLine, start);
+  }
+
+  void text() {
+    final start = current - 1;
+    final startLine = line;
+    _consumeText();
+    addToken(
+      TokenType.dartCode,
+      source.substring(start, current),
+      startLine,
+      start,
+    );
   }
 
   void number() {
@@ -85,32 +122,28 @@ class _Scanner {
     addToken(TokenType.number, number, line, start);
   }
 
-  void property() {
+  void propertyOrWidget() {
     final start = current - 1;
-    String property = previous();
+    // allow putting colors in a named property
     const allowedSymbols = ['_', '#', '*', '.', ','];
     while (
         isAlpha(peek()) || isDigit(peek()) || allowedSymbols.contains(peek())) {
-      property += advance();
-    }
-    if (widgets.keys.contains(property)) {
-      addToken(TokenType.widgetName, property, line, start);
-    } else {
-      addToken(TokenType.property, property, line, start);
-    }
-  }
-
-  void variable() {
-    final start = current;
-    if (!isAlpha(peek()) && peek() != '_') {
-      throw ScanError(
-          'Variable names must start with a letter or underscore, got ${peek()}');
-    }
-    advance();
-    while (isAlpha(peek()) || isDigit(peek()) || peek() == '_') {
       advance();
     }
-    addToken(TokenType.variable, source.substring(start, current), line, start);
+    // allow putting dart code in a named property
+    if (match('{')) {
+      _consumeDartCode();
+    }
+    // allow putting text in a named property
+    if (match("'")) {
+      _consumeText();
+    }
+    final lexeme = source.substring(start, current);
+    if (widgets.keys.contains(lexeme)) {
+      addToken(TokenType.widgetName, lexeme, line, start);
+    } else {
+      addToken(TokenType.property, lexeme, line, start);
+    }
   }
 
   static bool isDigit(String char) {
@@ -153,6 +186,12 @@ class _Scanner {
 
   String previous() {
     return source[current - 1];
+  }
+
+  bool match(String expected) {
+    if (peek() != expected) return false;
+    advance();
+    return true;
   }
 
   void consume(String expected, String failMessage) {

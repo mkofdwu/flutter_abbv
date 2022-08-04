@@ -35,9 +35,7 @@ final overflowAbbv = {
 };
 
 class Text extends Widget {
-  final String text;
-
-  Text(this.text, List<Token> properties) : super(properties, []);
+  Text(List<Token> properties) : super(properties, []);
 
   @override
   List<String> toDartCode(String parentName) {
@@ -60,6 +58,8 @@ class Text extends Widget {
     final p = Map<String, String>.from(extractor.extractedProps);
     final nums = extractor.extractedNumbers;
     final colors = extractor.extractedColors;
+    // there should just be a single string
+    final text = extractor.extractedDartCode.single;
 
     if (nums.length > 1) {
       throw InvalidPropertyError(
@@ -97,7 +97,7 @@ class Text extends Widget {
       ],
     ];
     final code = constructDartCode(textSkeleton, p);
-    code.insert(1, "  '$text'${p['case'] == '.up' ? '.toUpperCase()' : ''},");
+    code.insert(1, "  $text${p['case'] == '.up' ? '.toUpperCase()' : ''},");
 
     return code;
   }

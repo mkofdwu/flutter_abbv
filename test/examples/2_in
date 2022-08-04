@@ -1,0 +1,1 @@
+scaffold #black column cs ph30 mc (spacer; T 'Title' 36 w700 #white; 12; T 'Lorem ipsum sit dolor amet' 16 w500 #fff*0.6; 36; spacer 2; align cr container #blue ph20v8 r10 T 'Continue' w600; spacer)

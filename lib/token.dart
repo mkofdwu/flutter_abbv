@@ -2,11 +2,10 @@ enum TokenType {
   leftParen,
   rightParen,
   semicolon,
-  text, // text widget (e.g. 'Sample text' red 36 w700)
   widgetName,
   property,
   number,
-  variable,
+  dartCode,
 }
 
 class Token {

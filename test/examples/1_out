@@ -1,0 +1,51 @@
+SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'image',
+      ),
+      SizedBox(height: 36),
+      Row(
+        children: [
+          Text(
+            'janecooper',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 36,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          SizedBox(width: 16),
+          Container(
+            width: 120,
+            padding: EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.add,
+                    size: 24,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    'Add new',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+),
