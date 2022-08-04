@@ -2,6 +2,7 @@
 
 Here's the complete list of widgets with built-in support. You can also define abbreviations for your own widgets with [custom widgets](custom_widgets.md)
 
+* [Text](#text)
 * [Container](#container)
 * [Row](#row)
 * [Column](#column)
@@ -13,9 +14,57 @@ Here's the complete list of widgets with built-in support. You can also define a
 * [Expanded](#expanded)
 * [Spacer](#spacer)
 * [Padding](#padding)
-* [Text](#text)
 * [SizedBox](#sizedbox)
 * [Placeholder](#placeholder)
+
+## Text
+
+format `T '{desired string}' {font size} {font weight} {color} {font style} {textAlign} {letterSpacing} {maxLines} {overflow} {shadows} {case}`
+
+You can pass in text enclosed in quotes, or some valid dart code enclosed in braces, for example: `T {user.username} 20` -> `Text(user.username, style: TextStyle(fontSize: 20))`
+
+Font weight can be one of `normal`, `bold`, `w100`, `w200`, `w300`, `w400`, `w500`, `w600`, `w700`, `w800`, `w900`.
+
+Font style can only be `i`, which makes the text italic.
+
+Text align can be one of `left`, `cent` (cant be `center` because its a widget name), `right`, `justify`,
+
+Letter spacing is a number prefixed by `sp`, for example, `sp1.4`
+
+Max lines is a number prefixed by `max`, for example, `max2`
+
+Text overflow
+
+| abbrevation | dart code |
+| --- | --- |
+| oc | TextOverflow.clip |
+| oe | TextOverflow.ellipsis |
+| of | TextOverflow.fade |
+
+You can specify uppercase by adding `up` for the case property
+
+Shadows follow the same format as [shadows in Container](#shadow)
+
+### example
+
+`T 'The quick brown fox jumps over the lazy dog' 16 w700 #grey i cent sp1.4 max2 oe sh#black*0.1,10 up`
+
+```dart
+Text(
+  'The quick brown fox jumps over the lazy dog'.toUpperCase(),
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  overflow: TextOverflow.ellipsis,
+  style: TextStyle(
+    color: Colors.grey,
+    fontSize: 16,
+    fontWeight: FontWeight.w700,
+    fontStyle: FontStyle.italic,
+    letterSpacing: 1.4,
+    shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),],
+  ),
+),
+```
 
 ## Container
 
@@ -227,53 +276,6 @@ Spacer widget with the given flex value.
 format: `pad {padding} {child}`
 
 Wraps a child in a Padding widget with the specified [padding property](common_properties.md#padding).
-
-## Text
-
-format `'{desired string}' {font size} {font weight} {color} {font style} {textAlign} {letterSpacing} {maxLines} {overflow} {shadows} {case}`
-
-Font weight can be one of `normal`, `bold`, `w100`, `w200`, `w300`, `w400`, `w500`, `w600`, `w700`, `w800`, `w900`.
-
-Font style can only be `i`, which makes the text italic.
-
-Text align can be one of `left`, `cent` (cant be `center` because its a widget name), `right`, `justify`,
-
-Letter spacing is a number prefixed by `sp`, for example, `sp1.4`
-
-Max lines is a number prefixed by `max`, for example, `max2`
-
-Text overflow
-
-| abbrevation | dart code |
-| --- | --- |
-| oc | TextOverflow.clip |
-| oe | TextOverflow.ellipsis |
-| of | TextOverflow.fade |
-
-You can specify uppercase by adding `up` for the case property
-
-Shadows follow the same format as [shadows in Container](#shadow)
-
-### example
-
-`'The quick brown fox jumps over the lazy dog' 16 w700 #grey i cent sp1.4 max2 oe sh#black*0.1,10 up`
-
-```dart
-Text(
-  'The quick brown fox jumps over the lazy dog'.toUpperCase(),
-  textAlign: TextAlign.center,
-  maxLines: 2,
-  overflow: TextOverflow.ellipsis,
-  style: TextStyle(
-    color: Colors.grey,
-    fontSize: 16,
-    fontWeight: FontWeight.w700,
-    fontStyle: FontStyle.italic,
-    letterSpacing: 1.4,
-    shadows: [Shadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),],
-  ),
-),
-```
 
 ## SizedBox
 
