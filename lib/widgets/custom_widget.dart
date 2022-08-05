@@ -10,7 +10,7 @@ class CustomWidget extends Widget {
   final List<NamedProperty> namedProperties;
   final Map<String, String> simpleAbbvs;
   final List<String> variables;
-  final List<dynamic>? skeleton;
+  final List<dynamic> skeleton;
 
   CustomWidget(
     this.name,
@@ -37,23 +37,14 @@ class CustomWidget extends Widget {
     }
     // NOTE: unlabelled numbers arent used for custom widgets
     final extractedDartCode = extractor.extractedDartCode;
-    print(variables);
     // for a custom widget, all dart code (named or unnamed) is a property
     // in order of importance (e.g. if only one variable is supplied only the first var name is used)
     for (int i = 0; i < extractedDartCode.length; i++) {
       p[variables[i]] = extractedDartCode[i];
     }
 
-    final code = constructDartCode(
-      skeleton != null
-          ? _yamlToSkeleton(skeleton!)
-          : [
-              name,
-              ...p.keys, // for custom widget everything is used as a property
-            ],
-      p,
-    );
-    code.addAll(extractor.extraCode);
+    final code = constructDartCode(_yamlToSkeleton(skeleton), p);
+    insertExtraCode(code, extractor.extraCode);
     if (children.length == 1) {
       insertChildCode(code, children.single, parentName);
     } else if (children.length > 1) {
@@ -87,6 +78,7 @@ class CustomWidget extends Widget {
         final objectName = (subProps as List<String>).removeAt(0);
         return ['$propName: $objectName', ...subProps];
       }
+      return e;
     }).toList();
   }
 }

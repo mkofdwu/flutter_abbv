@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { execFileSync } from 'node:child_process';
 
 const widgetNames: string[] = [
+  'T',
   'container',
   'row',
   'column',
@@ -24,6 +25,9 @@ function startsWithWidget(source: string): boolean {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  const currentDir = vscode.workspace.workspaceFolders![0].uri.path;
+  const configFile = currentDir + '/pubspec.yaml';
+
   const provider = vscode.languages.registerCompletionItemProvider('dart', {
     provideCompletionItems(
       document: vscode.TextDocument,
@@ -48,6 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
       if (source[1] !== "'" && !startsWithWidget(source.substring(1))) {
         return undefined;
       }
+
+      console.log(vscode.workspace.workspaceFolders);
 
       try {
         const data = execFileSync(`flutter_abbv.exe`, [source.substring(1)], { cwd: __dirname });

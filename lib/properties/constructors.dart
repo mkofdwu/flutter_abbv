@@ -40,6 +40,10 @@ List<String> constructChildrenCode(List<Widget> children, String parentName) {
   return code;
 }
 
+void insertExtraCode(List<String> code, List<String> extraCode) {
+  code.insertAll(code.length - 1, extraCode.map((line) => '  $line'));
+}
+
 void insertChildCode(List<String> code, Widget child, String parentName) {
   code.insertAll(code.length - 1, constructChildCode(child, parentName));
 }

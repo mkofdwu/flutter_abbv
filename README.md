@@ -3,6 +3,10 @@
 Speed up flutter development with abbreviation for constructing widget trees.
 Like emmet abbreviation but for flutter
 
+* Speeds up implementing new widgets/pages, especially when creating a new app.
+* Effective for common widgets such as Text / Padding with a lot of repetitive typing
+* Intended to be used for simple widgets without complex logic / animations.
+
 ## Installation
 
 VSCode: Download and install the .vsix file

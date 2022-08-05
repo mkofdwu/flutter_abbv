@@ -1,0 +1,21 @@
+color_palette: Palette
+icon_set: FluentIcons
+widgets:
+  MyButton:
+    code: button
+    text: $variable
+    isPrimary:
+      primary: 'true'
+    fillWidth:
+      fillw: 'true'
+    isLoading:
+      loading: 'true'
+    # primary: 'isPrimary: true,'
+    # fillw: 'fillWidth: true,'
+    # loading: 'isLoading: true,'
+    prefixIcon:
+      pre.: 'FluentIcons.$'
+    suffixIcon:
+      suf.: 'FluentIcons.$'
+    onPressed:
+      on: $variable

@@ -15,7 +15,7 @@ class WidgetConfig {
   final List<NamedProperty> namedProps;
   final Map<String, String> simpleAbbvs;
   final List<String> variables;
-  final List<dynamic>? skeleton;
+  final List<dynamic> skeleton; // now should never be null
 
   const WidgetConfig({
     required this.code,
@@ -33,6 +33,8 @@ WidgetConfig _extractWidgetConfig(YamlMap rawConfig) {
   final simpleAbbvs = <String, String>{};
   final variables = <String>[];
   List<dynamic>? skeleton;
+  // used as default skeleton if one is not supplied
+  final propNames = <String>[];
 
   for (final prop in rawConfig.keys) {
     if (prop == 'code') continue;
@@ -43,6 +45,7 @@ WidgetConfig _extractWidgetConfig(YamlMap rawConfig) {
 
     final propData = rawConfig[prop];
     if (propData is YamlMap) {
+      propNames.add(prop);
       if (propData.containsKey('enum')) {
         final enumName = propData.remove('enum')!;
         enumProps.add(EnumProperty(
@@ -75,6 +78,7 @@ WidgetConfig _extractWidgetConfig(YamlMap rawConfig) {
         // is just direct substitution
         simpleAbbvs[prop] = propData;
       } else {
+        propNames.add(prop);
         switch (propData) {
           case '\$padding':
             namedProps.add(NamedProperty('p', 'padding', paddingToDartCode));
@@ -97,12 +101,12 @@ WidgetConfig _extractWidgetConfig(YamlMap rawConfig) {
     namedProps: namedProps,
     simpleAbbvs: simpleAbbvs,
     variables: variables,
-    skeleton: skeleton,
+    skeleton: skeleton ?? propNames,
   );
 }
 
 void main() {
-  final yaml = File('./example_config.yaml').readAsStringSync();
+  final yaml = File('./discourse_config.yaml').readAsStringSync();
   final data = loadYaml(yaml);
 
   if (data['color_palette'] != null) {
@@ -120,14 +124,14 @@ void main() {
           config.namedProps,
           config.simpleAbbvs,
           config.variables,
-          config.skeleton,
+          [widgetName] + config.skeleton,
           p,
           c,
         );
   }
 
-  final tokens =
-      scanTokens("button h100 'Hello world' t{'Message \${user.username}'}");
+  final tokens = scanTokens(
+      "button 'Sign up' primary loading fillw pre.check on{handleSignUp}");
   final tree = Parser(tokens).widget();
   print(tree.toDartCode('').join('\n'));
 }
