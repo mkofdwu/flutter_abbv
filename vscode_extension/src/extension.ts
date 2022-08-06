@@ -1,32 +1,14 @@
 import * as vscode from 'vscode';
 import { execFileSync } from 'node:child_process';
-
-const widgetNames: string[] = [
-  'T',
-  'container',
-  'row',
-  'column',
-  'scroll',
-  'icon',
-  'scaffold',
-  'center',
-  'align',
-  'expanded',
-  'spacer',
-  'pad',
-];
-
-function startsWithWidget(source: string): boolean {
-  const result = /[a-zA-Z_][a-zA-Z0-9_]*/.exec(source);
-  if (result !== null) {
-    return widgetNames.includes(result[0]);
-  }
-  return false;
-}
+import { existsSync } from 'fs';
 
 export function activate(context: vscode.ExtensionContext) {
-  const currentDir = vscode.workspace.workspaceFolders![0].uri.path;
-  const configFile = currentDir + '/pubspec.yaml';
+  if (vscode.workspace.workspaceFolders === undefined) {
+    return;
+  }
+
+  const currentDir = vscode.workspace.workspaceFolders[0].uri.fsPath;
+  const configFile = currentDir + '/flutter_abbv.yaml';
 
   const provider = vscode.languages.registerCompletionItemProvider('dart', {
     provideCompletionItems(
@@ -49,14 +31,16 @@ export function activate(context: vscode.ExtensionContext) {
       if (source.length === 0) {
         return undefined;
       }
-      if (source[1] !== "'" && !startsWithWidget(source.substring(1))) {
-        return undefined;
-      }
-
-      console.log(vscode.workspace.workspaceFolders);
 
       try {
-        const data = execFileSync(`flutter_abbv.exe`, [source.substring(1)], { cwd: __dirname });
+        const args = [source.substring(1)];
+        if (existsSync(configFile)) {
+          args.push(configFile);
+        }
+        const data = execFileSync(`flutter_abbv.exe`, args, { cwd: __dirname });
+        if (data.slice(0, 7) === 'ERROR: ') {
+          return undefined;
+        }
         const completion = new vscode.CompletionItem({
           label: data.toString(),
           description: 'Flutter Abbreviation',
