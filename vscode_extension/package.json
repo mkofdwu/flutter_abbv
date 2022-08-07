@@ -14,7 +14,7 @@
   ],
   "main": "./out/extension.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "cd .. && dart compile exe bin/flutter_abbv.dart -o vscode_extension/out/flutter_abbv.exe && cd vscode_extension && npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
