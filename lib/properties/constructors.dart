@@ -17,7 +17,13 @@ List<String> constructDartCode(
     } else {
       assert(field is String);
       if (data.containsKey(field)) {
-        code.add('  $field: ${data[field]},');
+        if ((field as String).startsWith('__')) {
+          // positional argument, dont supply name
+          code.add('  ${data[field]},');
+        } else {
+          // normal named argument
+          code.add('  $field: ${data[field]},');
+        }
       }
     }
   }

@@ -35,13 +35,14 @@ WidgetConfig _extractWidgetConfig(YamlMap rawConfig) {
   final propNames = <String>[];
 
   for (final prop in rawConfig.keys) {
+    final propData = rawConfig[prop];
+
     if (prop == 'code') continue;
     if (prop == '_construct') {
-      skeleton = rawConfig[prop];
+      skeleton = propData;
       continue;
     }
 
-    final propData = rawConfig[prop];
     if (propData is YamlMap) {
       propNames.add(prop);
       if (propData.containsKey('enum')) {
